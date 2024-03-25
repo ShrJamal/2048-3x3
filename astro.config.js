@@ -5,8 +5,7 @@ import svelte, { vitePreprocess } from '@astrojs/svelte'
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://shrjamal.github.io',
-  base: '2048-3x3',
+  site: 'https://shrjamal.github.io/2048-3x3',
   integrations: [
     tailwind(),
     metaTags(),
