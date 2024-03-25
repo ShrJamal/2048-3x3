@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
+import { AppConfig } from '~/app'
 
-const SITE = 'https://shrjamal.github.io/2048-3x3'
 export const GET: APIRoute = async () => {
   return new Response(
     `<?xml version="1.0" encoding="UTF-8"?>
@@ -29,7 +29,7 @@ function getXMLEntry({
 }) {
   return `
   <url>
-    <loc>${SITE}${path}</loc>
+    <loc>${AppConfig.site}${path}</loc>
     ${lastmod ? `<lastmod>${new Date(lastmod).toISOString()}</lastmod>` : ''}
     ${changeFreq ? `<changefreq>${changeFreq}</changefreq>` : ''}
     ${priority ? `<priority>${priority}</priority>` : ''}

@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro'
+import { AppConfig } from '~/app'
 
 export const GET: APIRoute = async () => {
   return new Response(
     `
 	User-agent: *
 	Allow: /
+	Sitemap: ${AppConfig.site}/sitemap.xml
 	`,
     {
       headers: {
