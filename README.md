@@ -1,3 +1,4 @@
-# Astro Playground
+# 2048 3x3 Game
 
-This is astr playground for me to learn and play with the [Astro](https://astro.build/) framework.
+2048 3x3 Game built with Astro, Svelte, TailwindCSS.
+
