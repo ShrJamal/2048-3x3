@@ -1,0 +1,52 @@
+{
+  "name": "2048-3x3",
+  "version": "0.0.1",
+  "private": true,
+  "author": "ShrJamal",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "astro": "astro",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro build",
+    "check": "astro check --watch ",
+    "format": "prettier -w .",
+    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
+    "prepare": "npx simple-git-hooks"
+  },
+  "devDependencies": {
+    "@astrojs/svelte": "^5.2.0",
+    "@astrojs/tailwind": "^5.1.0",
+    "@fontsource/clear-sans": "^5.0.7",
+    "@iconify/json": "^2.2.196",
+    "@iconify/tailwind": "^0.1.4",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
+    "astro": "^4.5.9",
+    "astro-meta-tags": "^0.2.2",
+    "daisyui": "^4.8.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-astro": "^0.33.1",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
+    "prettier-plugin-astro": "^0.13.0",
+    "simple-git-hooks": "^2.11.0",
+    "svelte": "^4.2.12",
+    "tailwind-merge": "^2.2.2",
+    "tailwindcss": "^3.4.1"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{html,js,jsx,cjs,mjs,ts,tsx,astro,vue}": [
+      "eslint --fix"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write"
+    ]
+  }
+}

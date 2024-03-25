@@ -1,0 +1,31 @@
+---
+import BaseHead from '~/components/core/BaseHead.astro'
+import Navbar from '~/components/core/Navbar.astro'
+
+export interface Props {
+  class?: string
+  title?: string
+  description?: string
+  ogImg?: string
+}
+
+const className = Astro.props.class || ''
+---
+
+<!doctype html>
+<html lang="en" data-theme={'system'}>
+  <head>
+    <BaseHead {...Astro.props} />
+    <slot name="head" />
+  </head>
+  <body
+    class:list={[
+      'bg-page-bg min-h-svh overflow-y-auto flex flex-col items-center',
+      className,
+    ]}
+  >
+    <Navbar />
+    <div class="h-[1rem]"></div>
+    <slot />
+  </body>
+</html>

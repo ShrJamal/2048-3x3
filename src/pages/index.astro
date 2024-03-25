@@ -1,0 +1,47 @@
+---
+import RootLayout from '~/layouts/RootLayout.astro'
+import Game from '~/components/Game/index.svelte'
+---
+
+<RootLayout
+  title="2048 3x3 "
+  description="A 3x3 version of the popular 2048 game."
+>
+  <div class="flex gap-2">
+    <main class:list={['mt-2 flex-1 flex flex-col px-1']}>
+      <h1 class="text-6xl font-bold">2048 3x3</h1>
+      <Game client:load />
+    </main>
+  </div>
+</RootLayout>
+
+<style is:global>
+  :root {
+    --board-size: 98vmin;
+  }
+
+  main {
+    max-width: var(--board-size);
+    width: 100%;
+  }
+  @media (width >= 475px) {
+    :root {
+      --board-size: 90vmin;
+    }
+  }
+  @media (width >= 640px) {
+    :root {
+      --board-size: 85vmin;
+    }
+  }
+  @media (width >= 768px) {
+    :root {
+      --board-size: 80vmin;
+    }
+  }
+  @media (width >= 1024px) {
+    :root {
+      --board-size: min(80vmin, 800px);
+    }
+  }
+</style>
