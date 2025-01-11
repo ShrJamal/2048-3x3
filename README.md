@@ -1,8 +1,8 @@
 # 2048 3x3 Game
 
-Play Here: [2048 3x3](https://2048.club/3x3)
+A 3x3 version of 2048 game [Play Here](https://shrjamal.github.io/2048-3x3/)
 
-Play Other Sizes of 2048 Game
+Play Other Sizes of 2048 Game:
 
 - [2048 4x4](https://2048.club/)
 - [2048 3x3](https://2048.club/3x3)
