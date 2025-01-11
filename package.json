@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "author": "Jamal | shrjamal.com",
   "type": "module",
+  "packageManager": "bun@1.1.43",
   "scripts": {
     "astro": "astro",
     "dev": "astro dev",

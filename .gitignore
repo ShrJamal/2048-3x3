@@ -23,7 +23,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Lock files
-bun.lockb
+# bun.lockb
 package-lock.json
 pnpm-lock.yaml
 
