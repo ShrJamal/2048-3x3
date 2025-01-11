@@ -1,0 +1,101 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "files": {
+    "ignoreUnknown": true
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  },
+  "formatter": {
+    "useEditorconfig": true,
+    "formatWithErrors": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 80,
+    "attributePosition": "multiline"
+  },
+  "javascript": {
+    "formatter": {
+      "trailingCommas": "all",
+      "quoteStyle": "double",
+      "semicolons": "asNeeded",
+      "quoteProperties": "asNeeded",
+      "arrowParentheses": "always",
+      "attributePosition": "multiline"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "ignore": ["*.d.ts"],
+    "rules": {
+      "recommended": true,
+      "style": { "noNonNullAssertion": "off", "noParameterAssign": "off" },
+      "correctness": {
+        "noUnusedVariables": "warn",
+        "noUnusedImports": {
+          "level": "warn",
+          "fix": "unsafe"
+        }
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "complexity": {
+        "noForEach": "off",
+        "noBannedTypes": "off"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "noLabelWithoutControl": "off"
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "fix": "unsafe",
+          "level": "off",
+          "options": {
+            "attributes": ["class:list", "classList"],
+            "functions": ["clsx", "cn", "cva", "tw", "tv"]
+          }
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "include": ["*.astro"],
+      "formatter": {
+        "enabled": true
+      },
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedImports": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["*.svelte"],
+      "formatter": {
+        "enabled": false
+      },
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUndeclaredVariables": "off",
+            "noUnusedImports": "off"
+          },
+          "style": { "useConst": "off", "useImportType": "off" }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+---
+import type { GameSizeType } from "~/lib/types"
+import GameScore from "./GameScore"
+
+interface Props {
+  size: GameSizeType
+}
+
+const { size } = Astro.props
+---
+
+<section id="board-skeleton" class="flex flex-col gap-2 items-center">
+  <div class="w-full flex justify-end">
+    <GameScore score={() => 0} bestScore={() => 0} />
+  </div>
+
+  <div
+    class="game-board relative grid aspect-square w-full select-none rounded bg-grid-bg bg-opacity-70"
+  >
+    {
+      Array.from({ length: Number.parseInt(size) ** 2 }).map((_) => (
+        <span class="cell bg-grid-cell bg-opacity-70" />
+      ))
+    }
+  </div>
+</section>

@@ -1,0 +1,35 @@
+---
+import { Image } from "astro:assets"
+---
+
+<section class="flex flex-col gap-1 bg-base-300">
+  <h2 class="pl-2 text-lg font-bold">About 2048 3x3 Game</h2>
+  <div class="grid gap-2 p-2 relative grid-cols-[7rem_1fr]">
+    <Image
+      src="https://r2.2048.club/thumbnails/classic.webp"
+      alt={`Play 2048 3x3 online for free`}
+      class="w-[7rem] rounded-sm object-contain md:w-[9rem] row-span-2 md:row-span-5"
+      width={150}
+      height={200}
+    />
+
+    <p class="indent-2 w-full col-span-1 row-span-2">
+      2048 is a fun and engaging puzzle game that's easy to learn but
+      challenging to master. When you start, you'll see a grid with numbered
+      tiles.
+    </p>
+    <p class="col-span-2 md:col-span-1 row-span-3">
+      <strong>How to play:</strong>
+      {
+        Astro.props.howToPlay ?? (
+          <span>
+            The goal is to merge tiles of the same number by sliding them
+            together using arrow keys on your keyboard or swiping on a mobile
+            device. Tiles with matching numbers will combine into one tile
+            showing their sum.
+          </span>
+        )
+      }
+    </p>
+  </div>
+</section>

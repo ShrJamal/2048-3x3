@@ -1,0 +1,53 @@
+---
+import "~/assets/global.css"
+
+export interface Props {
+  title?: string
+  description?: string
+  ogImg?: string
+}
+
+const title = Astro.props.title || "2048 3x3"
+const description =
+  Astro.props.description ||
+  "Play 2048 3x3 Game online for free and record your best score"
+const ogImg = Astro.props.ogImg || "/logo.webp"
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={new URL(ogImg, Astro.url)} />
+<meta property="og:image:width" content="657" />
+<meta property="og:image:height" content="659" />
+<meta property="og:image:alt" content={title} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:site" content={Astro.site} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={new URL(ogImg, Astro.url)} />
+<meta property="twitter:image:alt" content={title} />
+
+<meta
+  name="google-site-verification"
+  content="JCIjdwgfsjssC1chOMMBEUfYjDWS5w_LkqS5ACsBo5c"
+/>
+<meta name="msvalidate.01" content="5415855BC5D185C977AFB23680253516" />

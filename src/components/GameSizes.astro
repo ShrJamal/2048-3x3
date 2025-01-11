@@ -1,0 +1,62 @@
+---
+import type { GameSizeType } from "~/lib/types"
+
+interface Props {
+  size: GameSizeType
+}
+
+const sizes = (
+  [
+    {
+      size: "3",
+      name: "3x3",
+      type: "Small",
+    },
+    {
+      size: "4",
+      type: "Classic",
+    },
+    {
+      size: "5",
+      type: "Medium",
+    },
+    {
+      size: "6",
+      type: "Large",
+    },
+  ] as const
+)
+  .map((v) => ({
+    name: `${v.size}x${v.size}`,
+    ...v,
+  }))
+  .filter((v) => v.size !== Astro.props.size)
+---
+
+<section class="flex flex-col gap-2">
+  <h2 class="text-xl font-bold">Play 2048 in different sizes</h2>
+  <ul class="grid grid-cols-3 gap-2 sm:gap-4">
+    {
+      sizes.map((v) => (
+        <li>
+          <a
+            class="btn btn-primary btn-lg rounded w-full"
+            href={`https://2048.club/${v.name}`.replace("4x4", "")}
+          >
+            <button
+              class="text-neutral flex flex-col py-2"
+              type="button"
+              title={`Play 2048 ${v.name} Game`}
+              style="flex-direction: column;"
+            >
+              <strong class="text-xl font-semibold sm:text-2xl">
+                {v.name}
+              </strong>
+              <span class="text-sm font-light">{v.type}</span>
+            </button>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

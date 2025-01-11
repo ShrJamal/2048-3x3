@@ -1,0 +1,29 @@
+---
+import BaseHead from "./BaseHead.astro"
+
+export interface Props {
+  class?: string
+  title?: string
+  description?: string
+  ogImg?: string
+}
+
+const className = Astro.props.class || ""
+---
+
+<!doctype html>
+<html lang="en" data-theme={"dark"}>
+  <head>
+    <BaseHead {...Astro.props} />
+    <slot name="head" />
+  </head>
+  <body
+    class:list={[
+      "max-w-screen w-full h-svh",
+      "flex flex-col items-center gap-4",
+      className,
+    ]}
+  >
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "strictNullChecks": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"]
+    }
+  },
+  "include": ["src", ".astro/types.d.ts", "astro.config.ts"]
+}

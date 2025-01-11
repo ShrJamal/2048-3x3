@@ -1,0 +1,42 @@
+---
+import GameBoard from "~/components/GameBoard"
+import GameBoardSkeleton from "~/components/GameBoardSkeleton.astro"
+import GameInfoCard from "~/components/GameInfoCard.astro"
+import GameSizes from "~/components/GameSizes.astro"
+import TheNavbar from "~/components/TheNavbar.astro"
+import RootLayout from "~/layouts/RootLayout.astro"
+
+const size = "3"
+---
+
+<RootLayout
+  title="2048 3x3"
+  description="A 3x3 version of the popular 2048 game."
+>
+  <main
+    class="flex-1 flex flex-col px-1 gap-6 w-full"
+    style="max-width: var(--board-size)"
+  >
+    <TheNavbar />
+    <!-- class="flex w-full flex-col gap-4" -->
+    <section class="flex flex-col">
+      <h1 class="text-6xl font-bold">
+        <strong> 2048 </strong>
+        <small class="font-extralight capitalize"> 3x3 </small>
+      </h1>
+      <p class="text-pretty">Merge tiles to score high!</p>
+    </section>
+    <GameBoard client:only="solid" {size} />
+    <GameBoardSkeleton {size} />
+    <GameSizes {size} />
+    <GameInfoCard />
+    <div class="h-10"></div>
+  </main>
+</RootLayout>
+
+<style
+  is:global
+  define:vars={{
+    "game-size": size,
+  }}
+></style>

@@ -1,0 +1,33 @@
+{
+  "name": "2048club",
+  "version": "0.0.1",
+  "author": "Jamal | shrjamal.com",
+  "type": "module",
+  "scripts": {
+    "astro": "astro",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro build",
+    "fmt": "biome check .",
+    "prepare": "npx simple-git-hooks"
+  },
+  "dependencies": {
+    "solid-js": "^1.9.4",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@astrojs/solid-js": "^5.0.1",
+    "@astrojs/tailwind": "^5.1.4",
+    "@biomejs/biome": "^1.9.4",
+    "@iconify/json": "^2.2.294",
+    "@iconify/tailwind": "^1.2.0",
+    "astro": "^5.1.5",
+    "daisyui": "^4.12.23",
+    "simple-git-hooks": "^2.11.1",
+    "tailwindcss": "^3.4.17",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "biome check --write --staged --no-errors-on-unmatched"
+  }
+}

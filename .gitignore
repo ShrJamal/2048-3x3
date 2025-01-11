@@ -1,0 +1,32 @@
+.DS_Store
+node_modules/
+dist/
+dev-dist/
+.output/
+.astro
+.vercel
+
+# DB
+.drizzle
+
+# Cloudflare
+worker-configuration.d.ts
+functions
+.mf
+.wrangler
+.partykit
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Lock files
+bun.lockb
+package-lock.json
+pnpm-lock.yaml
+
+# environment variables
+.env
+.env.production

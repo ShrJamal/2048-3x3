@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  padding: 0 2px !important;
+}
+
+:root {
+  --board-size: min(calc(100vmin - 1rem), 40rem);
+}
+
+.game-board {
+  --grid-pad: calc(var(--board-size) / var(--game-size) / 10);
+  --grid-gap: calc(var(--grid-pad) / 1.5);
+  --cell-size: calc(
+    (
+      var(--board-size) -
+      2 *
+      var(--grid-pad) -
+      (var(--game-size) - 1) *
+      var(--grid-gap)
+    ) /
+    var(--game-size)
+  );
+  --cell-radius: calc(var(--cell-size) / 30);
+  padding: var(--grid-pad);
+  width: fit-content;
+  max-height: var(--board-size);
+  max-width: var(--board-size);
+  font-size: calc(var(--cell-size) / 8 * 3);
+  grid-template-rows: repeat(var(--game-size), var(--cell-size));
+  grid-template-columns: repeat(var(--game-size), var(--cell-size));
+  gap: var(--grid-gap);
+}
+
+.cell,
+.tile {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border-radius: var(--cell-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  70% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes zoomAndFade {
+  0% {
+    opacity: 1;
+    scale: 2;
+    left: 30%;
+    bottom: 0;
+  }
+
+  50% {
+    opacity: 0.5;
+    scale: 1;
+  }
+
+  100% {
+    opacity: 0;
+    scale: 0;
+    bottom: 200%;
+  }
+}

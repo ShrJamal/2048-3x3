@@ -1,0 +1,18 @@
+---
+import { Image } from "astro:assets"
+---
+
+<!-- src="https://2048.club/logo/64x64.webp" -->
+<nav class="w-full py-2 flex items-center gap-2">
+  <a class="flex items-center gap-1" href="https://2048.club">
+    <Image
+      src="/logo.webp"
+      alt="2048Club Logo"
+      width={30}
+      height={30}
+      loading="eager"
+    />
+
+    <span class="font-bold text-xl sm:text-2xl">2048.club</span>
+  </a>
+</nav>
