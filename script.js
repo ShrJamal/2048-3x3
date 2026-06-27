@@ -4,7 +4,7 @@
 
 const SIZE = 3;
 
-const SLIDE_MS = 100;
+const SLIDE_MS = 130; // keep in sync with the .tile transform transition in style.css
 const POP_MS = 200;
 
 const TILE_STYLES = {
@@ -39,8 +39,10 @@ const SWIPE_THRESHOLD = 60;
 const GAME_KEY = `GAME-${SIZE}x${SIZE}`;
 const BEST_KEY = `BEST_SCORE-${SIZE}x${SIZE}`;
 
-const CSS_POS = (pos) =>
-  `calc(var(--grid-pad) + ${pos} * ( var(--cell-size) + var(--grid-gap) ))`;
+// Tiles sit at the grid origin (--grid-pad) and are placed with a translate,
+// so movement animates as a single GPU-accelerated transform transition.
+const tileTransform = (x, y) =>
+  `translate(calc(${x} * (var(--cell-size) + var(--grid-gap))), calc(${y} * (var(--cell-size) + var(--grid-gap))))`;
 
 // ---- DOM references ----
 const boardEl = document.getElementById("board");
@@ -62,7 +64,6 @@ let score = 0;
 let bestScore = 0;
 let combo = 0; // consecutive merges; resets on a merge-less move
 let status = "playing"; // "playing" | "over"
-let isMoving = false;
 const tileEls = new Map(); // tile.id -> HTMLElement
 const history = []; // snapshots taken before each move, for undo
 
@@ -84,31 +85,28 @@ function init() {
 }
 
 // The core move: slide + merge, spawn a tile, update score, check game over.
-async function handleMove(dir) {
-  if (isMoving || status !== "playing") return;
-  isMoving = true;
-  try {
-    const snapshot = takeSnapshot();
-    const { addedScore, merges, hasMoved } = await slideTiles(grid, dir);
-    if (!hasMoved) return;
+// Synchronous and non-blocking — CSS transitions handle the motion, so rapid
+// input stays responsive instead of waiting on each animation.
+function handleMove(dir) {
+  if (status !== "playing") return;
+  const snapshot = takeSnapshot();
+  const { addedScore, merges, hasMoved, mergedAway } = slideTiles(grid, dir);
+  if (!hasMoved) return;
 
-    pushHistory(snapshot);
-    grid.addTile(grid.getRandTile());
-    reconcileTiles();
+  pushHistory(snapshot);
+  grid.addTile(grid.getRandTile());
+  render(mergedAway);
 
-    if (addedScore > 0) addScore(addedScore);
-    updateCombo(merges);
-    if (isGameOver()) setStatus("over");
+  if (addedScore > 0) addScore(addedScore);
+  updateCombo(merges);
+  if (isGameOver()) setStatus("over");
 
-    saveGame();
-  } finally {
-    isMoving = false;
-  }
+  saveGame();
 }
 
 // Restore the board to just before the last move.
 function undo() {
-  if (isMoving || !history.length) return;
+  if (!history.length) return;
   const snap = history.pop();
   grid = new Grid(SIZE, snap.tiles);
   score = snap.score;
@@ -116,7 +114,7 @@ function undo() {
   setStatus("playing");
   renderScore();
   renderCombo();
-  reconcileTiles();
+  render();
   updateUndoButton();
   saveGame();
 }
@@ -144,7 +142,7 @@ function newGame() {
   updateUndoButton();
   setStatus("playing");
   renderScore();
-  reconcileTiles();
+  render();
   saveGame();
 }
 
@@ -161,17 +159,29 @@ function renderCells() {
   boardEl.insertBefore(frag, messageEl);
 }
 
-// Diff the live grid against the DOM: create new tiles, update + pop changed
-// ones, and remove tiles that were merged away.
-function reconcileTiles() {
+// Diff the live grid against the DOM: move tiles with a transform (CSS animates
+// the slide), pop merges/spawns, and slide merged-away tiles into the merge
+// cell before removing them.
+function render(mergedAway = []) {
   const live = grid.tiles;
-  const liveIds = new Set(live.map((t) => t.id));
+  const keep = new Set(live.map((t) => t.id));
+  for (const t of mergedAway) keep.add(t.id);
 
   for (const [id, el] of tileEls) {
-    if (!liveIds.has(id)) {
+    if (!keep.has(id)) {
       el.remove();
       tileEls.delete(id);
     }
+  }
+
+  // A merged tile slides into its destination, then disappears under the result.
+  for (const tile of mergedAway) {
+    const el = tileEls.get(tile.id);
+    if (!el) continue;
+    tileEls.delete(tile.id);
+    el.style.zIndex = "1";
+    el.style.transform = tileTransform(tile.x, tile.y);
+    setTimeout(() => el.remove(), SLIDE_MS + 40);
   }
 
   for (const tile of live) {
@@ -180,14 +190,13 @@ function reconcileTiles() {
       el = createTileEl(tile);
       tileEls.set(tile.id, el);
       boardEl.insertBefore(el, messageEl);
-      pop(el);
+      appearTile(el);
     } else {
       const changed = el.dataset.value !== String(tile.value);
       paintTile(el, tile);
-      if (changed) pop(el);
+      el.style.transform = tileTransform(tile.x, tile.y);
+      if (changed) popTile(el);
     }
-    el.style.left = CSS_POS(tile.x);
-    el.style.top = CSS_POS(tile.y);
   }
 }
 
@@ -195,9 +204,11 @@ function createTileEl(tile) {
   const el = document.createElement("div");
   el.className = "tile";
   el.id = tile.id;
-  const span = document.createElement("span");
-  el.appendChild(span);
+  const inner = document.createElement("div");
+  inner.className = "tile-inner";
+  el.appendChild(inner);
   paintTile(el, tile);
+  el.style.transform = tileTransform(tile.x, tile.y);
   return el;
 }
 
@@ -205,9 +216,10 @@ function paintTile(el, tile) {
   const { bg, fg } = tileStyle(tile.value);
   el.dataset.value = tile.value;
   el.dataset.len = String(tile.value).length;
-  el.style.backgroundColor = bg;
-  el.firstChild.style.color = fg;
-  el.firstChild.textContent = tile.value;
+  const inner = el.firstChild;
+  inner.style.backgroundColor = bg;
+  inner.style.color = fg;
+  inner.textContent = tile.value;
 }
 
 function tileStyle(value) {
@@ -266,6 +278,18 @@ function pop(el) {
   el.style.animation = "none";
   void el.offsetWidth; // restart the animation
   el.style.animation = `pop ${POP_MS}ms ease-in-out`;
+}
+
+// Tile pop/spawn animate the inner layer, leaving the wrapper's slide untouched.
+function popTile(el) {
+  const inner = el.firstChild;
+  inner.style.animation = "none";
+  void inner.offsetWidth;
+  inner.style.animation = `pop ${POP_MS}ms ease-in-out`;
+}
+
+function appearTile(el) {
+  el.firstChild.style.animation = `appear ${SLIDE_MS}ms ease-out`;
 }
 
 function floatScore(added) {
@@ -386,13 +410,14 @@ class Grid {
   }
 }
 
-// Slide every tile in `dir`, animating movers, then commit positions/merges.
-// Returns the score gained and whether anything actually moved.
-async function slideTiles(grid, dir) {
+// Slide every tile in `dir`, committing moves and merges to the model at once.
+// The DOM transitions the motion; merged-away source tiles are returned so they
+// can slide into the merge cell before being removed.
+function slideTiles(grid, dir) {
   let addedScore = 0;
   let merges = 0;
-  const animations = [];
-  const afterAnimation = [];
+  let moved = false;
+  const mergedAway = [];
 
   for (const line of grid.getCellsByDir(dir)) {
     line.forEach((currentCell, i) => {
@@ -401,35 +426,29 @@ async function slideTiles(grid, dir) {
       const dstCell = findDestinationCell(line, i, currentTile);
       if (!dstCell) return;
 
+      moved = true;
       currentCell.tile = null;
-      animations.push(animateTileTo(currentTile, dstCell.x, dstCell.y));
-      afterAnimation.push(() => {
-        currentTile.x = dstCell.x;
-        currentTile.y = dstCell.y;
-      });
+      currentTile.x = dstCell.x;
+      currentTile.y = dstCell.y;
 
       if (dstCell.tile) {
         const dstTile = dstCell.tile;
-        dstCell.mergedTile = currentTile;
+        dstCell.mergedTile = currentTile; // block a second merge into this cell
+        dstTile.value *= 2;
+        addedScore += dstTile.value;
         merges++;
-        afterAnimation.push(() => {
-          dstCell.mergedTile = null;
-          dstTile.value *= 2;
-          addedScore += dstTile.value;
-        });
+        mergedAway.push(currentTile);
       } else {
         dstCell.tile = currentTile;
       }
     });
   }
 
-  // Wait for the slides, but never let a backgrounded tab — where the browser
-  // pauses animations and `.finished` never settles — lock the board.
-  if (animations.length)
-    await Promise.race([Promise.all(animations), wait(SLIDE_MS + 80)]);
-  afterAnimation.forEach((fn) => fn());
+  // Clear the per-move merge markers so they don't leak into the next move
+  // or the game-over check.
+  for (const row of grid.cells) for (const cell of row) cell.mergedTile = null;
 
-  return { addedScore, merges, hasMoved: animations.length > 0 };
+  return { addedScore, merges, hasMoved: moved, mergedAway };
 }
 
 // Walk toward the wall to find the furthest cell this tile can land in:
@@ -459,19 +478,6 @@ function hasMoveInDir(grid, dir) {
     }
   }
   return false;
-}
-
-function animateTileTo(tile, newX, newY) {
-  const el = tileEls.get(tile.id);
-  if (!el) return Promise.resolve();
-  return el.animate(
-    { left: [CSS_POS(tile.x), CSS_POS(newX)], top: [CSS_POS(tile.y), CSS_POS(newY)] },
-    { duration: SLIDE_MS, easing: "ease-in-out" },
-  ).finished;
-}
-
-function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // ---- Tiles ----
@@ -507,7 +513,7 @@ function loadGame() {
     bestScore = Math.max(bestScore, saved.bestScore || 0);
     setStatus(saved.isOver ? "over" : "playing");
     renderScore();
-    reconcileTiles();
+    render();
     updateUndoButton();
   } catch {
     newGame();
