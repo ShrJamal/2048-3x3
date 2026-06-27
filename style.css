@@ -445,6 +445,113 @@ main {
   box-shadow: 0 0.15rem 0 #c95a36;
 }
 
+/* ---- Join the Club CTA ---- */
+.club-cta {
+  width: var(--content-width);
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--card-radius);
+  padding: 2.5rem 1.75rem;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(135deg, #f0764c 0%, #ee6da0 60%, #f3b25a 130%);
+  box-shadow: 0 1rem 2.5rem rgba(240, 118, 76, 0.35);
+}
+
+/* Soft decorative blobs for depth. */
+.club-cta::before,
+.club-cta::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.club-cta::before {
+  width: 13rem;
+  height: 13rem;
+  top: -5.5rem;
+  right: -3.5rem;
+}
+
+.club-cta::after {
+  width: 9rem;
+  height: 9rem;
+  bottom: -4.5rem;
+  left: -2.5rem;
+}
+
+.club-cta-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.club-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.club-cta h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 800;
+}
+
+.club-cta p {
+  margin: 0;
+  max-width: 34rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.club-cta p a {
+  color: #fff;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.club-btn {
+  margin-top: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.85rem 1.9rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #e0563a;
+  font-weight: 800;
+  font-size: 1.05rem;
+  text-decoration: none;
+  box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.18);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.club-btn svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.club-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.65rem 1.4rem rgba(0, 0, 0, 0.24);
+}
+
+.club-btn:active {
+  transform: translateY(0);
+}
+
 /* ---- SEO content ---- */
 .content {
   width: var(--content-width);
