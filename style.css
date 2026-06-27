@@ -383,7 +383,7 @@ main {
   width: var(--cell-size);
   height: var(--cell-size);
   transform: translate(0, 0);
-  transition: transform 130ms ease-in-out;
+  transition: transform var(--slide-ms, 140ms) var(--slide-ease, cubic-bezier(0.34, 1.4, 0.64, 1));
   will-change: transform;
 }
 

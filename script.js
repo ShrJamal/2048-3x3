@@ -1,10 +1,16 @@
 // 2048 3x3 — a single-file, framework-free port.
-// Tiles are absolutely-positioned elements with stable ids; movement is animated
-// with the Web Animations API, and the grid model drives merges and game-over.
+// Tiles are absolutely-positioned elements placed with a transform; movement is a
+// CSS transition driven by the grid model, which also handles merges and game-over.
 
-const SIZE = 3;
-
-const SLIDE_MS = 130; // keep in sync with the .tile transform transition in style.css
+// Board size and movement feel are tunable via the URL for testing, e.g.
+//   ?size=8        an 8x8 board (2..8, default 3)
+//   ?ms=70         slide duration in ms (default 140)
+//   ?ease=ease-in  easing curve (default is a slight overshoot/bounce)
+const params = new URLSearchParams(location.search);
+const SIZE = Math.min(8, Math.max(2, Number(params.get("size")) || 3));
+const SLIDE_MS = Math.min(1000, Math.max(10, Number(params.get("ms")) || 140));
+// Overshoots the destination a touch, then settles back — the "bounce" feel.
+const SLIDE_EASE = params.get("ease") || "cubic-bezier(0.34, 1.4, 0.64, 1)";
 const POP_MS = 200;
 
 const TILE_STYLES = {
@@ -69,6 +75,12 @@ const history = []; // snapshots taken before each move, for undo
 
 function init() {
   boardEl.style.setProperty("--game-size", SIZE);
+  boardEl.style.setProperty("--slide-ms", `${SLIDE_MS}ms`);
+  boardEl.style.setProperty("--slide-ease", SLIDE_EASE);
+  if (SIZE !== 3) {
+    document.querySelector(".title span").textContent = `${SIZE}x${SIZE}`;
+    document.title = `2048 ${SIZE}x${SIZE} — test board`;
+  }
   renderCells();
   wireInput();
   undoBtn.addEventListener("click", undo);
