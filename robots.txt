@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shrjamal.github.io/2048-3x3/sitemap.xml

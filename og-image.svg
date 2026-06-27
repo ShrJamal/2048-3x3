@@ -1,0 +1,34 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" font-family="Nunito, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#f2e7d8" />
+
+  <!-- Board -->
+  <rect x="90" y="95" width="440" height="440" rx="30" fill="#e7d8c2" />
+  <!-- row 0 -->
+  <rect x="120" y="125" width="113" height="113" rx="18" fill="#ffffff" />
+  <text x="176.5" y="200" font-size="54" font-weight="800" fill="#8c8275" text-anchor="middle">2</text>
+  <rect x="253" y="125" width="113" height="113" rx="18" fill="#f7e7ae" />
+  <text x="309.5" y="200" font-size="54" font-weight="800" fill="#b0863a" text-anchor="middle">4</text>
+  <rect x="386" y="125" width="113" height="113" rx="18" fill="#f6cfa3" />
+  <text x="442.5" y="200" font-size="54" font-weight="800" fill="#c07a38" text-anchor="middle">8</text>
+  <!-- row 1 -->
+  <rect x="120" y="258" width="113" height="113" rx="18" fill="#ef9a63" />
+  <text x="176.5" y="333" font-size="50" font-weight="800" fill="#ffffff" text-anchor="middle">16</text>
+  <rect x="253" y="258" width="113" height="113" rx="18" fill="#f19aaa" />
+  <text x="309.5" y="333" font-size="50" font-weight="800" fill="#ffffff" text-anchor="middle">32</text>
+  <rect x="386" y="258" width="113" height="113" rx="18" fill="#e7d8c2" />
+  <!-- row 2 -->
+  <rect x="120" y="391" width="113" height="113" rx="18" fill="#c9a9e2" />
+  <text x="176.5" y="466" font-size="50" font-weight="800" fill="#ffffff" text-anchor="middle">64</text>
+  <rect x="253" y="391" width="113" height="113" rx="18" fill="#9fc0e8" />
+  <text x="309.5" y="466" font-size="44" font-weight="800" fill="#ffffff" text-anchor="middle">128</text>
+  <rect x="386" y="391" width="113" height="113" rx="18" fill="#7bbe6e" />
+  <text x="442.5" y="463" font-size="36" font-weight="800" fill="#ffffff" text-anchor="middle">2048</text>
+
+  <!-- Text -->
+  <text x="588" y="270" font-size="112" font-weight="800" fill="#5b4a36">2048 <tspan fill="#a8967c" font-weight="600">3x3</tspan></text>
+  <text x="592" y="345" font-size="40" font-weight="700" fill="#8a7a64">The 3×3 version of the classic</text>
+  <text x="592" y="397" font-size="40" font-weight="700" fill="#8a7a64">2048 number puzzle.</text>
+
+  <rect x="592" y="450" width="320" height="70" rx="35" fill="#f0764c" />
+  <text x="752" y="496" font-size="34" font-weight="800" fill="#ffffff" text-anchor="middle">Play free online</text>
+</svg>

@@ -3,326 +3,309 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <title>2048 3x3</title>
-    <meta name="description" content="A 3x3 version of the popular 2048 game." />
+    <meta name="color-scheme" content="light dark" />
+
+    <title>2048 3x3 — Play the 3×3 Version of 2048 Online Free</title>
+    <meta
+      name="description"
+      content="Play 2048 3x3, a compact 3×3 version of the classic 2048 puzzle. Slide and merge tiles, build combo streaks, and beat your best score. Free, no download, works on mobile."
+    />
+    <meta name="keywords" content="2048 3x3, 2048 3 by 3, 3x3 2048, 2048 puzzle, merge tiles game, 2048 online" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="author" content="2048 3x3" />
+    <link rel="canonical" href="https://shrjamal.github.io/2048-3x3/" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-    <style>
-      /* ---- Theme tokens ---- */
-      :root {
-        --page-bg: #0f172a; /* slate-900, matches the original dark theme */
-        --card-bg: rgba(13, 18, 33, 0.82);
-        --grid-bg: rgba(187, 173, 160, 0.7); /* #bbada0 @ 70% */
-        --grid-cell: rgba(205, 193, 180, 0.7); /* #cdc1b4 @ 70% */
-        --score-bg: #454545;
-        --primary: hsl(15, 91%, 60%);
-        --primary-focus: hsl(15, 91%, 52%);
-        --text: #ffffff;
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2e7d8" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2a2520" />
 
-        /* Board geometry — everything below scales from these two lines. */
-        --board-size: min(calc(100vmin - 1rem), 40rem);
-        --game-size: 3; /* overridden by JS from the SIZE constant */
-      }
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="2048 3x3" />
+    <meta property="og:title" content="2048 3x3 — Play the 3×3 Version of 2048 Online Free" />
+    <meta
+      property="og:description"
+      content="A compact 3×3 take on the classic 2048 puzzle. Slide and merge tiles, build combo streaks, and beat your best score."
+    />
+    <meta property="og:url" content="https://shrjamal.github.io/2048-3x3/" />
+    <meta property="og:image" content="https://shrjamal.github.io/2048-3x3/og-image.svg" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="2048 3x3 game board with merged number tiles" />
 
-      * {
-        box-sizing: border-box;
-      }
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="2048 3x3 — Play the 3×3 Version of 2048 Online Free" />
+    <meta
+      name="twitter:description"
+      content="A compact 3×3 take on the classic 2048 puzzle. Slide and merge tiles, build combo streaks, and beat your best score."
+    />
+    <meta name="twitter:image" content="https://shrjamal.github.io/2048-3x3/og-image.svg" />
+    <meta name="twitter:image:alt" content="2048 3x3 game board with merged number tiles" />
 
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-      }
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
 
-      body {
-        min-height: 100svh;
-        padding: 0 2px;
-        background: var(--page-bg);
-        color: var(--text);
-        font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        -webkit-tap-highlight-color: transparent;
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://shrjamal.github.io/2048-3x3/#website",
+            "url": "https://shrjamal.github.io/2048-3x3/",
+            "name": "2048 3x3",
+            "description": "Play 2048 3x3, a 3×3 version of the classic 2048 puzzle game.",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "VideoGame",
+            "@id": "https://shrjamal.github.io/2048-3x3/#game",
+            "name": "2048 3x3",
+            "url": "https://shrjamal.github.io/2048-3x3/",
+            "description": "2048 3x3 is a compact 3×3 version of the classic 2048 puzzle. Slide tiles in four directions, merge matching numbers to double their value, build combo streaks, and try to reach 2048 on a 3×3 grid.",
+            "genre": ["Puzzle", "Number puzzle"],
+            "gamePlatform": ["Web browser", "Mobile web"],
+            "playMode": "SinglePlayer",
+            "applicationCategory": "GameApplication",
+            "operatingSystem": "Any (web browser)",
+            "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+            "inLanguage": "en",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://shrjamal.github.io/2048-3x3/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is 2048 3x3?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "2048 3x3 is a version of the 2048 puzzle played on a 3×3 grid. You slide and merge numbered tiles to reach higher numbers. The smaller board makes it faster and more challenging than the classic 4×4 game."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How is 2048 3x3 different from the original 2048?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The original 2048 uses a 4×4 grid with 16 cells. 2048 3x3 uses a 3×3 grid with only 9 cells, so the board fills up quickly and you need sharper planning to keep merging tiles."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is 2048 3x3 free to play?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. 2048 3x3 is completely free, runs in your web browser, and requires no download, installation, or account."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I play 2048 3x3 on mobile?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. The game is fully responsive. On a phone or tablet, just swipe up, down, left, or right to slide the tiles."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do you win 2048 3x3?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The classic goal is to create a 2048 tile by merging. Because the 3×3 board is small, reaching 2048 is tough, so many players aim to beat their personal best score instead."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is my progress saved in 2048 3x3?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Your current game and best score are stored locally in your browser, so they are remembered when you come back on the same device."
+                }
+              }
+            ]
+          }
+        ]
       }
-
-      main {
-        flex: 1;
-        width: 100%;
-        max-width: var(--board-size);
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
-        padding: 1rem 0.25rem 2.5rem;
-      }
-
-      /* ---- Header ---- */
-      header h1 {
-        margin: 0;
-        font-size: 3.75rem;
-        font-weight: 700;
-        line-height: 1;
-      }
-
-      header h1 small {
-        font-weight: 200;
-        text-transform: capitalize;
-      }
-
-      header p {
-        margin: 0.5rem 0 0;
-        opacity: 0.85;
-      }
-
-      /* ---- Top bar: New Game + scores ---- */
-      .topbar {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: stretch;
-        gap: 0.5rem;
-      }
-
-      .scores {
-        display: flex;
-        gap: 0.25rem;
-      }
-
-      .score-box {
-        position: relative;
-        width: 5.2rem;
-        height: 2.8rem;
-        border-radius: 0.25rem;
-        background: var(--score-bg);
-        font-weight: 700;
-        font-size: 0.875rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.1rem;
-      }
-
-      .score-box .label {
-        font-size: 0.7rem;
-        letter-spacing: 0.02em;
-      }
-
-      .score-box .add {
-        position: absolute;
-        font-size: 1.5rem;
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      /* ---- Buttons ---- */
-      .btn {
-        cursor: pointer;
-        border-radius: 0.25rem;
-        font-weight: 700;
-        font-family: inherit;
-        border: 1px solid transparent;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.25rem;
-        transition: background-color 0.15s ease, color 0.15s ease;
-      }
-
-      .btn-newgame {
-        padding: 0 0.75rem;
-        background: transparent;
-        color: var(--text);
-        border-color: rgba(255, 255, 255, 0.3);
-      }
-
-      .btn-newgame:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-
-      .btn-newgame svg {
-        width: 1.75rem;
-        height: 1.75rem;
-      }
-
-      .btn-newgame .label {
-        display: none;
-      }
-
-      @media (min-width: 768px) {
-        .btn-newgame .label {
-          display: inline;
-        }
-      }
-
-      .btn-primary {
-        background: var(--primary);
-        color: var(--text);
-        padding: 0.75rem 1.75rem;
-        font-size: 1.125rem;
-      }
-
-      .btn-primary:hover {
-        background: var(--primary-focus);
-      }
-
-      /* ---- Board ---- */
-      .game-board {
-        position: relative;
-        align-self: center;
-        --grid-pad: calc(var(--board-size) / var(--game-size) / 10);
-        --grid-gap: calc(var(--grid-pad) / 1.5);
-        --cell-size: calc(
-          (
-              var(--board-size) - 2 * var(--grid-pad) - (var(--game-size) - 1) *
-                var(--grid-gap)
-            ) / var(--game-size)
-        );
-        --cell-radius: calc(var(--cell-size) / 30);
-        padding: var(--grid-pad);
-        width: 100%;
-        max-width: var(--board-size);
-        max-height: var(--board-size);
-        aspect-ratio: 1 / 1;
-        border-radius: 0.375rem;
-        background: var(--grid-bg);
-        user-select: none;
-        touch-action: none;
-        font-size: calc(var(--cell-size) / 8 * 3);
-        display: grid;
-        grid-template-rows: repeat(var(--game-size), var(--cell-size));
-        grid-template-columns: repeat(var(--game-size), var(--cell-size));
-        gap: var(--grid-gap);
-      }
-
-      .cell,
-      .tile {
-        width: var(--cell-size);
-        height: var(--cell-size);
-        border-radius: var(--cell-radius);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .cell {
-        background: var(--grid-cell);
-      }
-
-      .tile {
-        position: absolute;
-        font-weight: 700;
-        color: #776e65;
-      }
-
-      /* ---- Game over overlay ---- */
-      .game-message {
-        position: absolute;
-        inset: 0;
-        z-index: 10;
-        border-radius: 0.375rem;
-        background: var(--card-bg);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        animation: fadeIn 1s ease;
-      }
-
-      .game-message[hidden] {
-        display: none;
-      }
-
-      .game-message p {
-        margin: 0;
-        font-size: 3.75rem;
-        font-weight: 700;
-      }
-
-      /* ---- Animations ---- */
-      @keyframes pop {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.2);
-        }
-        70% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-
-      @keyframes zoomAndFade {
-        0% {
-          opacity: 1;
-          scale: 2;
-          left: 30%;
-          bottom: 0;
-        }
-        50% {
-          opacity: 0.5;
-          scale: 1;
-        }
-        100% {
-          opacity: 0;
-          scale: 0;
-          bottom: 200%;
-        }
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-    </style>
+    </script>
   </head>
 
   <body>
     <main>
-      <header>
-        <h1><strong>2048</strong> <small>3x3</small></h1>
-        <p>Merge tiles to score high!</p>
+      <header class="intro">
+        <h1 class="title">2048 <span>3x3</span></h1>
+        <p class="tagline">
+          Play <strong>2048 3x3</strong> online — a faster, more compact 3×3 take on the
+          classic 2048 number puzzle. Slide tiles, merge matching numbers, build combo
+          streaks, and chase a new best score.
+        </p>
       </header>
 
-      <section class="game">
-        <div class="topbar">
-          <button class="btn btn-newgame" id="new-game" title="New Game" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            <span class="label">New Game</span>
-          </button>
-
-          <div class="scores">
-            <div class="score-box" id="score-box">
+      <div class="card">
+        <div class="hud">
+          <div class="stats">
+            <div class="pill">
               <span class="label">SCORE</span>
-              <div class="value" id="score-value">0</div>
-              <div class="add" id="score-add"></div>
+              <span class="value" id="score">0</span>
+              <span class="score-add" id="score-add"></span>
             </div>
-            <div class="score-box" id="best-box">
-              <span class="label">TOP SCORE</span>
-              <div class="value" id="best-value">0</div>
+            <div class="pill">
+              <span class="label"><svg class="crown" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 8l4.7 3.9L12 4.5l5.3 7.4L22 8l-2.1 9.5H4.1L2 8z" /></svg> BEST</span>
+              <span class="value" id="best">0</span>
             </div>
+          </div>
+
+          <div class="controls">
+            <div class="combo" id="combo" hidden>
+              <span class="flame">🔥</span>
+              <span><span id="combo-text">x0</span><span class="word"> combo</span></span>
+            </div>
+            <button class="restart" id="restart" type="button" title="New Game" aria-label="New Game">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 2v6h6" />
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L3 8" />
+              </svg>
+            </button>
           </div>
         </div>
 
         <div class="game-board" id="board">
           <div class="game-message" id="game-message" hidden>
             <p>Game Over</p>
-            <button class="btn btn-primary" id="play-again" type="button">Play Again</button>
+            <button class="btn-play-again" id="play-again" type="button">Play Again</button>
           </div>
         </div>
-      </section>
+      </div>
+
+      <article class="content">
+        <section id="about">
+          <h2>About 2048 3x3</h2>
+          <p>
+            <strong>2048 3x3</strong> is a bite-sized version of the popular 2048 puzzle
+            game, played on a 3×3 grid instead of the original 4×4 board. The smaller
+            board makes every move count: with only nine cells, you have to plan your
+            merges carefully so the grid doesn't fill up.
+          </p>
+          <p>
+            The rules are simple. Combine two tiles of the same number to double their
+            value — two 2s become a 4, two 4s become an 8 — and keep chaining merges to
+            reach 2048 and beyond. It runs entirely in your browser, works on desktop and
+            mobile, and needs no download or sign-up.
+          </p>
+        </section>
+
+        <section id="how-to-play">
+          <h2>How to Play 2048 3x3</h2>
+          <ol>
+            <li>
+              Slide all tiles in one direction with the <strong>arrow keys</strong>,
+              <strong>WASD</strong>, or Vim <strong>H/J/K/L</strong>. On a phone or tablet,
+              swipe up, down, left, or right.
+            </li>
+            <li>
+              When two tiles with the same number touch, they merge into a single tile
+              worth double the value.
+            </li>
+            <li>Every move spawns a new <strong>2</strong> (or occasionally a 4) on a random empty cell.</li>
+            <li>Chain merges across consecutive moves to build a <strong>combo streak</strong>.</li>
+            <li>
+              The game ends when the 3×3 board is full and no more merges are possible.
+              Your best score is saved in your browser.
+            </li>
+          </ol>
+        </section>
+
+        <section id="features">
+          <h2>Features</h2>
+          <ul>
+            <li>Compact 3×3 board for quick, strategic rounds</li>
+            <li>Smooth tile-sliding and merge animations</li>
+            <li>Combo streak counter that rewards consecutive merges</li>
+            <li>Automatic light and dark mode that follows your system theme</li>
+            <li>Best score saved locally — pick up right where you left off</li>
+            <li>Free to play, mobile-friendly, and works offline once loaded</li>
+          </ul>
+        </section>
+
+        <section id="faq">
+          <h2>2048 3x3 — Frequently Asked Questions</h2>
+          <div class="faq">
+            <details>
+              <summary>What is 2048 3x3?</summary>
+              <p>
+                2048 3x3 is a version of the 2048 puzzle played on a 3×3 grid. You slide
+                and merge numbered tiles to reach higher numbers. The smaller board makes
+                it faster and more challenging than the classic 4×4 game.
+              </p>
+            </details>
+            <details>
+              <summary>How is 2048 3x3 different from the original 2048?</summary>
+              <p>
+                The original 2048 uses a 4×4 grid with 16 cells. 2048 3x3 uses a 3×3 grid
+                with only 9 cells, so the board fills up quickly and you need sharper
+                planning to keep merging tiles.
+              </p>
+            </details>
+            <details>
+              <summary>Is 2048 3x3 free to play?</summary>
+              <p>
+                Yes. 2048 3x3 is completely free, runs in your web browser, and requires
+                no download, installation, or account.
+              </p>
+            </details>
+            <details>
+              <summary>Can I play 2048 3x3 on mobile?</summary>
+              <p>
+                Yes. The game is fully responsive. On a phone or tablet, just swipe up,
+                down, left, or right to slide the tiles.
+              </p>
+            </details>
+            <details>
+              <summary>How do you win 2048 3x3?</summary>
+              <p>
+                The classic goal is to create a 2048 tile by merging. Because the 3×3
+                board is small, reaching 2048 is tough, so many players aim to beat their
+                personal best score instead.
+              </p>
+            </details>
+            <details>
+              <summary>Is my progress saved in 2048 3x3?</summary>
+              <p>
+                Your current game and best score are stored locally in your browser, so
+                they are remembered when you come back on the same device.
+              </p>
+            </details>
+          </div>
+        </section>
+
+        <section id="disclaimer">
+          <h2>Disclaimer</h2>
+          <p class="disclaimer">
+            2048 3x3 is an independent, fan-made project created for entertainment. It is
+            <strong>not affiliated with, endorsed by, sponsored by, or associated with</strong>
+            Gabriele Cirulli, the original creator of 2048, or any official 2048 product.
+            The name “2048” is used here only to describe the gameplay. All trademarks
+            belong to their respective owners.
+          </p>
+        </section>
+      </article>
+
+      <footer class="site-footer">
+        <p>2048 3x3 — a free 3×3 take on the 2048 puzzle.</p>
+      </footer>
     </main>
 
     <script src="script.js"></script>

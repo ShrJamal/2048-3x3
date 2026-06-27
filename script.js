@@ -7,25 +7,22 @@ const SIZE = 3;
 const SLIDE_MS = 100;
 const POP_MS = 200;
 
-const COLORS = new Map([
-  [2, { bg: "#eee4da", fg: "#776e65" }],
-  [4, { bg: "#ede0c8", fg: "#776e65" }],
-  [8, { bg: "#f2b179", fg: "#f9f6f2" }],
-  [16, { bg: "#f59563", fg: "#f9f6f2" }],
-  [32, { bg: "#f67c5f", fg: "#f9f6f2" }],
-  [64, { bg: "#f65e3b", fg: "#f9f6f2" }],
-  [128, { bg: "#edcf72", fg: "#f9f6f2" }],
-  [256, { bg: "#edcc61", fg: "#f9f6f2" }],
-  [512, { bg: "#edc850", fg: "#f9f6f2" }],
-  [1024, { bg: "#edc53f", fg: "#f9f6f2" }],
-  [2048, { bg: "#edc22e", fg: "#f9f6f2" }],
-  [4096, { bg: "#ccbf3f", fg: "#f9f6f2" }],
-  [8192, { bg: "#33a4d8", fg: "#f9f6f2" }],
-  [16384, { bg: "#a06cd5", fg: "#f9f6f2" }],
-  [32768, { bg: "#f07b7b", fg: "#f9f6f2" }],
-  [65536, { bg: "#7acba5", fg: "#f9f6f2" }],
-  [131072, { bg: "#ffb347", fg: "#f9f6f2" }],
-]);
+const TILE_STYLES = {
+  2: { bg: "#FFFFFF", fg: "#8C8275" },
+  4: { bg: "#F7E7AE", fg: "#B0863A" },
+  8: { bg: "#F6CFA3", fg: "#C07A38" },
+  16: { bg: "#EF9A63", fg: "#FFFFFF" },
+  32: { bg: "#F19AAA", fg: "#FFFFFF" },
+  64: { bg: "#C9A9E2", fg: "#FFFFFF" },
+  128: { bg: "#9FC0E8", fg: "#FFFFFF" },
+  256: { bg: "#7FCFBA", fg: "#FFFFFF" },
+  512: { bg: "#F0764C", fg: "#FFFFFF" },
+  1024: { bg: "#F3C95A", fg: "#7A4E0E" },
+  2048: { bg: "#7BBE6E", fg: "#FFFFFF" },
+};
+
+// Anything past 2048 reuses this purple.
+const HIGH = { bg: "#9B6CD0", fg: "#FFFFFF" };
 
 const DIRECTIONS = ["Up", "Down", "Left", "Right"];
 
@@ -48,15 +45,18 @@ const CSS_POS = (pos) =>
 // ---- DOM references ----
 const boardEl = document.getElementById("board");
 const messageEl = document.getElementById("game-message");
-const scoreValueEl = document.getElementById("score-value");
+const scoreValueEl = document.getElementById("score");
 const scoreAddEl = document.getElementById("score-add");
-const bestValueEl = document.getElementById("best-value");
+const bestValueEl = document.getElementById("best");
+const comboEl = document.getElementById("combo");
+const comboTextEl = document.getElementById("combo-text");
 const nbrFormat = new Intl.NumberFormat();
 
 // ---- Game state ----
 let grid;
 let score = 0;
 let bestScore = 0;
+let combo = 0; // consecutive merges; resets on a merge-less move
 let status = "playing"; // "playing" | "over"
 let isMoving = false;
 const tileEls = new Map(); // tile.id -> HTMLElement
@@ -65,7 +65,7 @@ function init() {
   boardEl.style.setProperty("--game-size", SIZE);
   renderCells();
   wireInput();
-  document.getElementById("new-game").addEventListener("click", newGame);
+  document.getElementById("restart").addEventListener("click", newGame);
   document.getElementById("play-again").addEventListener("click", newGame);
   loadGame();
 }
@@ -75,13 +75,14 @@ async function handleMove(dir) {
   if (isMoving || status !== "playing") return;
   isMoving = true;
   try {
-    const { addedScore, hasMoved } = await slideTiles(grid, dir);
+    const { addedScore, merges, hasMoved } = await slideTiles(grid, dir);
     if (!hasMoved) return;
 
     grid.addTile(grid.getRandTile());
     reconcileTiles();
 
     if (addedScore > 0) addScore(addedScore);
+    updateCombo(merges);
     if (isGameOver()) setStatus("over");
 
     saveGame();
@@ -100,6 +101,8 @@ function newGame() {
   grid.addTile(createRandTile(grid.tiles));
 
   score = 0;
+  combo = 0;
+  comboEl.hidden = true;
   setStatus("playing");
   renderScore();
   reconcileTiles();
@@ -160,11 +163,16 @@ function createTileEl(tile) {
 }
 
 function paintTile(el, tile) {
-  const color = COLORS.get(tile.value);
+  const { bg, fg } = tileStyle(tile.value);
   el.dataset.value = tile.value;
-  el.style.backgroundColor = color?.bg ?? "#3c3a32";
-  el.firstChild.style.color = color?.fg ?? "#f9f6f2";
+  el.dataset.len = String(tile.value).length;
+  el.style.backgroundColor = bg;
+  el.firstChild.style.color = fg;
   el.firstChild.textContent = tile.value;
+}
+
+function tileStyle(value) {
+  return TILE_STYLES[value] ?? HIGH;
 }
 
 function renderScore() {
@@ -183,6 +191,19 @@ function addScore(added) {
   renderScore();
 }
 
+// Grow the streak on merges; a merge-less move breaks it. Shown from x2 up.
+function updateCombo(merges) {
+  if (merges > 0) {
+    combo += merges;
+    comboTextEl.textContent = `x${combo}`;
+    comboEl.hidden = combo < 2;
+    if (!comboEl.hidden) pop(comboEl);
+  } else {
+    combo = 0;
+    comboEl.hidden = true;
+  }
+}
+
 function setStatus(next) {
   status = next;
   messageEl.hidden = next === "playing";
@@ -198,7 +219,7 @@ function floatScore(added) {
   scoreAddEl.textContent = `+${added}`;
   scoreAddEl.style.animation = "none";
   void scoreAddEl.offsetWidth;
-  scoreAddEl.style.animation = "zoomAndFade 500ms ease-in-out";
+  scoreAddEl.style.animation = "floatUp 600ms ease-out";
 }
 
 // ---- Input ----
@@ -309,6 +330,7 @@ class Grid {
 // Returns the score gained and whether anything actually moved.
 async function slideTiles(grid, dir) {
   let addedScore = 0;
+  let merges = 0;
   const animations = [];
   const afterAnimation = [];
 
@@ -329,6 +351,7 @@ async function slideTiles(grid, dir) {
       if (dstCell.tile) {
         const dstTile = dstCell.tile;
         dstCell.mergedTile = currentTile;
+        merges++;
         afterAnimation.push(() => {
           dstCell.mergedTile = null;
           dstTile.value *= 2;
@@ -346,7 +369,7 @@ async function slideTiles(grid, dir) {
     await Promise.race([Promise.all(animations), wait(SLIDE_MS + 80)]);
   afterAnimation.forEach((fn) => fn());
 
-  return { addedScore, hasMoved: animations.length > 0 };
+  return { addedScore, merges, hasMoved: animations.length > 0 };
 }
 
 // Walk toward the wall to find the furthest cell this tile can land in:
