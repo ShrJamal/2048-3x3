@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>2048 3x3</title>
+    <meta name="description" content="A 3x3 version of the popular 2048 game." />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <style>
+      /* ---- Theme tokens ---- */
+      :root {
+        --page-bg: #0f172a; /* slate-900, matches the original dark theme */
+        --card-bg: rgba(13, 18, 33, 0.82);
+        --grid-bg: rgba(187, 173, 160, 0.7); /* #bbada0 @ 70% */
+        --grid-cell: rgba(205, 193, 180, 0.7); /* #cdc1b4 @ 70% */
+        --score-bg: #454545;
+        --primary: hsl(15, 91%, 60%);
+        --primary-focus: hsl(15, 91%, 52%);
+        --text: #ffffff;
+
+        /* Board geometry — everything below scales from these two lines. */
+        --board-size: min(calc(100vmin - 1rem), 40rem);
+        --game-size: 3; /* overridden by JS from the SIZE constant */
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100svh;
+        padding: 0 2px;
+        background: var(--page-bg);
+        color: var(--text);
+        font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      main {
+        flex: 1;
+        width: 100%;
+        max-width: var(--board-size);
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        padding: 1rem 0.25rem 2.5rem;
+      }
+
+      /* ---- Header ---- */
+      header h1 {
+        margin: 0;
+        font-size: 3.75rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      header h1 small {
+        font-weight: 200;
+        text-transform: capitalize;
+      }
+
+      header p {
+        margin: 0.5rem 0 0;
+        opacity: 0.85;
+      }
+
+      /* ---- Top bar: New Game + scores ---- */
+      .topbar {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        gap: 0.5rem;
+      }
+
+      .scores {
+        display: flex;
+        gap: 0.25rem;
+      }
+
+      .score-box {
+        position: relative;
+        width: 5.2rem;
+        height: 2.8rem;
+        border-radius: 0.25rem;
+        background: var(--score-bg);
+        font-weight: 700;
+        font-size: 0.875rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.1rem;
+      }
+
+      .score-box .label {
+        font-size: 0.7rem;
+        letter-spacing: 0.02em;
+      }
+
+      .score-box .add {
+        position: absolute;
+        font-size: 1.5rem;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* ---- Buttons ---- */
+      .btn {
+        cursor: pointer;
+        border-radius: 0.25rem;
+        font-weight: 700;
+        font-family: inherit;
+        border: 1px solid transparent;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        transition: background-color 0.15s ease, color 0.15s ease;
+      }
+
+      .btn-newgame {
+        padding: 0 0.75rem;
+        background: transparent;
+        color: var(--text);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .btn-newgame:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .btn-newgame svg {
+        width: 1.75rem;
+        height: 1.75rem;
+      }
+
+      .btn-newgame .label {
+        display: none;
+      }
+
+      @media (min-width: 768px) {
+        .btn-newgame .label {
+          display: inline;
+        }
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--text);
+        padding: 0.75rem 1.75rem;
+        font-size: 1.125rem;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-focus);
+      }
+
+      /* ---- Board ---- */
+      .game-board {
+        position: relative;
+        align-self: center;
+        --grid-pad: calc(var(--board-size) / var(--game-size) / 10);
+        --grid-gap: calc(var(--grid-pad) / 1.5);
+        --cell-size: calc(
+          (
+              var(--board-size) - 2 * var(--grid-pad) - (var(--game-size) - 1) *
+                var(--grid-gap)
+            ) / var(--game-size)
+        );
+        --cell-radius: calc(var(--cell-size) / 30);
+        padding: var(--grid-pad);
+        width: 100%;
+        max-width: var(--board-size);
+        max-height: var(--board-size);
+        aspect-ratio: 1 / 1;
+        border-radius: 0.375rem;
+        background: var(--grid-bg);
+        user-select: none;
+        touch-action: none;
+        font-size: calc(var(--cell-size) / 8 * 3);
+        display: grid;
+        grid-template-rows: repeat(var(--game-size), var(--cell-size));
+        grid-template-columns: repeat(var(--game-size), var(--cell-size));
+        gap: var(--grid-gap);
+      }
+
+      .cell,
+      .tile {
+        width: var(--cell-size);
+        height: var(--cell-size);
+        border-radius: var(--cell-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cell {
+        background: var(--grid-cell);
+      }
+
+      .tile {
+        position: absolute;
+        font-weight: 700;
+        color: #776e65;
+      }
+
+      /* ---- Game over overlay ---- */
+      .game-message {
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        border-radius: 0.375rem;
+        background: var(--card-bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        animation: fadeIn 1s ease;
+      }
+
+      .game-message[hidden] {
+        display: none;
+      }
+
+      .game-message p {
+        margin: 0;
+        font-size: 3.75rem;
+        font-weight: 700;
+      }
+
+      /* ---- Animations ---- */
+      @keyframes pop {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        70% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes zoomAndFade {
+        0% {
+          opacity: 1;
+          scale: 2;
+          left: 30%;
+          bottom: 0;
+        }
+        50% {
+          opacity: 0.5;
+          scale: 1;
+        }
+        100% {
+          opacity: 0;
+          scale: 0;
+          bottom: 200%;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <h1><strong>2048</strong> <small>3x3</small></h1>
+        <p>Merge tiles to score high!</p>
+      </header>
+
+      <section class="game">
+        <div class="topbar">
+          <button class="btn btn-newgame" id="new-game" title="New Game" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span class="label">New Game</span>
+          </button>
+
+          <div class="scores">
+            <div class="score-box" id="score-box">
+              <span class="label">SCORE</span>
+              <div class="value" id="score-value">0</div>
+              <div class="add" id="score-add"></div>
+            </div>
+            <div class="score-box" id="best-box">
+              <span class="label">TOP SCORE</span>
+              <div class="value" id="best-value">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-board" id="board">
+          <div class="game-message" id="game-message" hidden>
+            <p>Game Over</p>
+            <button class="btn btn-primary" id="play-again" type="button">Play Again</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
