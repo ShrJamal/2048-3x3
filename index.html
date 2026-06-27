@@ -173,11 +173,18 @@
               <span class="flame">🔥</span>
               <span><span id="combo-text">x0</span><span class="word"> combo</span></span>
             </div>
-            <button class="restart" id="restart" type="button" title="New Game" aria-label="New Game">
+            <button class="icon-btn" id="undo" type="button" title="Undo last move" aria-label="Undo last move" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 14 4 9l5-5" />
+                <path d="M4 9h11a5 5 0 0 1 0 10h-1" />
+              </svg>
+            </button>
+            <button class="btn-newgame" id="new-game" type="button" title="Start a new game">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M3 2v6h6" />
                 <path d="M3.51 15a9 9 0 1 0 2.13-9.36L3 8" />
               </svg>
+              <span class="label">New Game</span>
             </button>
           </div>
         </div>
@@ -307,6 +314,15 @@
         <p>2048 3x3 — a free 3×3 take on the 2048 puzzle.</p>
       </footer>
     </main>
+
+    <dialog class="dialog" id="confirm-dialog" aria-labelledby="confirm-title">
+      <h2 id="confirm-title">Start a new game?</h2>
+      <p>This clears your current board and score. Your best score is kept.</p>
+      <div class="dialog-actions">
+        <button class="btn-secondary" id="confirm-cancel" type="button" autofocus>Cancel</button>
+        <button class="btn-danger" id="confirm-new" type="button">New Game</button>
+      </div>
+    </dialog>
 
     <script src="script.js"></script>
   </body>

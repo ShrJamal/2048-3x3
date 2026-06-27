@@ -200,7 +200,7 @@ main {
   display: none;
 }
 
-.restart {
+.icon-btn {
   flex: none;
   width: 2.9rem;
   height: 2.9rem;
@@ -213,20 +213,133 @@ main {
   background: var(--pill-bg);
   border: 1px solid var(--pill-border);
   box-shadow: 0 0.25rem 0.6rem var(--drop-shadow);
-  transition: transform 0.15s ease, color 0.15s ease;
+  transition: color 0.15s ease, opacity 0.15s ease;
 }
 
-.restart:hover {
+.icon-btn:hover:not(:disabled) {
   color: var(--text);
 }
 
-.restart:active {
-  transform: rotate(-45deg);
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
-.restart svg {
+.icon-btn svg {
   width: 1.4rem;
   height: 1.4rem;
+}
+
+/* New Game — accent-outlined so it clearly reads as "start over". */
+.btn-newgame {
+  flex: none;
+  height: 2.9rem;
+  padding: 0 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--pill-bg));
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow: 0 0.25rem 0.6rem var(--drop-shadow);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-newgame:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-newgame svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+@media (max-width: 520px) {
+  .btn-newgame {
+    padding: 0;
+    width: 2.9rem;
+    justify-content: center;
+  }
+  .btn-newgame .label {
+    display: none;
+  }
+}
+
+/* ---- Confirmation dialog ---- */
+.dialog {
+  margin: auto;
+  border: none;
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  color: var(--text);
+  padding: 1.75rem;
+  max-width: min(92vw, 24rem);
+  box-shadow: 0 1.5rem 3.5rem var(--card-shadow);
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.dialog[open] {
+  animation: dialogIn 0.2s ease;
+}
+
+.dialog h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.dialog p {
+  margin: 0 0 1.5rem;
+  color: var(--text-muted);
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.btn-secondary,
+.btn-danger {
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 0.6rem 1.3rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--pill-border);
+}
+
+.btn-secondary:hover {
+  color: var(--text);
+}
+
+.btn-danger {
+  color: #fff;
+  background: var(--accent);
+  box-shadow: 0 0.3rem 0 #c95a36;
+}
+
+.btn-danger:active {
+  transform: translateY(0.2rem);
+  box-shadow: 0 0.1rem 0 #c95a36;
 }
 
 /* ---- Board ---- */
@@ -483,6 +596,17 @@ main {
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 

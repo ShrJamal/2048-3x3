@@ -50,7 +50,11 @@ const scoreAddEl = document.getElementById("score-add");
 const bestValueEl = document.getElementById("best");
 const comboEl = document.getElementById("combo");
 const comboTextEl = document.getElementById("combo-text");
+const undoBtn = document.getElementById("undo");
+const confirmDialog = document.getElementById("confirm-dialog");
 const nbrFormat = new Intl.NumberFormat();
+
+const MAX_HISTORY = 50;
 
 // ---- Game state ----
 let grid;
@@ -60,13 +64,22 @@ let combo = 0; // consecutive merges; resets on a merge-less move
 let status = "playing"; // "playing" | "over"
 let isMoving = false;
 const tileEls = new Map(); // tile.id -> HTMLElement
+const history = []; // snapshots taken before each move, for undo
 
 function init() {
   boardEl.style.setProperty("--game-size", SIZE);
   renderCells();
   wireInput();
-  document.getElementById("restart").addEventListener("click", newGame);
+  undoBtn.addEventListener("click", undo);
+  document.getElementById("new-game").addEventListener("click", requestNewGame);
   document.getElementById("play-again").addEventListener("click", newGame);
+  document.getElementById("confirm-new").addEventListener("click", () => {
+    confirmDialog.close();
+    newGame();
+  });
+  document
+    .getElementById("confirm-cancel")
+    .addEventListener("click", () => confirmDialog.close());
   loadGame();
 }
 
@@ -75,9 +88,11 @@ async function handleMove(dir) {
   if (isMoving || status !== "playing") return;
   isMoving = true;
   try {
+    const snapshot = takeSnapshot();
     const { addedScore, merges, hasMoved } = await slideTiles(grid, dir);
     if (!hasMoved) return;
 
+    pushHistory(snapshot);
     grid.addTile(grid.getRandTile());
     reconcileTiles();
 
@@ -91,6 +106,28 @@ async function handleMove(dir) {
   }
 }
 
+// Restore the board to just before the last move.
+function undo() {
+  if (isMoving || !history.length) return;
+  const snap = history.pop();
+  grid = new Grid(SIZE, snap.tiles);
+  score = snap.score;
+  combo = snap.combo;
+  setStatus("playing");
+  renderScore();
+  renderCombo();
+  reconcileTiles();
+  updateUndoButton();
+  saveGame();
+}
+
+// New Game is destructive, so confirm when there's progress to lose.
+function requestNewGame() {
+  const hasProgress = score > 0 || history.length > 0 || grid.tiles.length > 2;
+  if (hasProgress) confirmDialog.showModal();
+  else newGame();
+}
+
 function newGame() {
   for (const el of tileEls.values()) el.remove();
   tileEls.clear();
@@ -102,7 +139,9 @@ function newGame() {
 
   score = 0;
   combo = 0;
-  comboEl.hidden = true;
+  history.length = 0;
+  renderCombo();
+  updateUndoButton();
   setStatus("playing");
   renderScore();
   reconcileTiles();
@@ -193,20 +232,34 @@ function addScore(added) {
 
 // Grow the streak on merges; a merge-less move breaks it. Shown from x2 up.
 function updateCombo(merges) {
-  if (merges > 0) {
-    combo += merges;
-    comboTextEl.textContent = `x${combo}`;
-    comboEl.hidden = combo < 2;
-    if (!comboEl.hidden) pop(comboEl);
-  } else {
-    combo = 0;
-    comboEl.hidden = true;
-  }
+  combo = merges > 0 ? combo + merges : 0;
+  renderCombo();
+  if (merges > 0 && !comboEl.hidden) pop(comboEl);
+}
+
+function renderCombo() {
+  comboTextEl.textContent = `x${combo}`;
+  comboEl.hidden = combo < 2;
 }
 
 function setStatus(next) {
   status = next;
   messageEl.hidden = next === "playing";
+}
+
+// ---- Undo history ----
+function takeSnapshot() {
+  return { tiles: grid.tiles.map((t) => ({ ...t })), score, combo };
+}
+
+function pushHistory(snapshot) {
+  history.push(snapshot);
+  if (history.length > MAX_HISTORY) history.shift();
+  updateUndoButton();
+}
+
+function updateUndoButton() {
+  undoBtn.disabled = history.length === 0;
 }
 
 function pop(el) {
@@ -225,6 +278,13 @@ function floatScore(added) {
 // ---- Input ----
 function wireInput() {
   document.addEventListener("keydown", (e) => {
+    if (confirmDialog.open) return;
+    // Ctrl/Cmd+Z undoes the last move.
+    if ((e.ctrlKey || e.metaKey) && e.code === "KeyZ" && !e.shiftKey) {
+      e.preventDefault();
+      undo();
+      return;
+    }
     if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
     const dir = GAME_KEYS[e.code];
     if (!dir) return;
@@ -448,6 +508,7 @@ function loadGame() {
     setStatus(saved.isOver ? "over" : "playing");
     renderScore();
     reconcileTiles();
+    updateUndoButton();
   } catch {
     newGame();
   }
