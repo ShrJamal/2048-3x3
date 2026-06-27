@@ -94,6 +94,8 @@ function init() {
     .getElementById("confirm-cancel")
     .addEventListener("click", () => confirmDialog.close());
   loadGame();
+  // Glyph widths shift once Nunito loads, so re-fit the numbers then.
+  if (document.fonts?.ready) document.fonts.ready.then(refitAll);
 }
 
 // The core move: slide + merge, spawn a tile, update score, check game over.
@@ -111,6 +113,7 @@ function handleMove(dir) {
 
   if (addedScore > 0) addScore(addedScore);
   updateCombo(merges);
+  if (merges > 0 && navigator.vibrate) navigator.vibrate(12);
   if (isGameOver()) setStatus("over");
 
   saveGame();
@@ -202,12 +205,16 @@ function render(mergedAway = []) {
       el = createTileEl(tile);
       tileEls.set(tile.id, el);
       boardEl.insertBefore(el, messageEl);
+      fitText(el); // measure now that it's laid out
       appearTile(el);
     } else {
       const changed = el.dataset.value !== String(tile.value);
       paintTile(el, tile);
       el.style.transform = tileTransform(tile.x, tile.y);
-      if (changed) popTile(el);
+      if (changed) {
+        fitText(el);
+        popTile(el);
+      }
     }
   }
 }
@@ -218,6 +225,9 @@ function createTileEl(tile) {
   el.id = tile.id;
   const inner = document.createElement("div");
   inner.className = "tile-inner";
+  const num = document.createElement("span");
+  num.className = "tile-num";
+  inner.appendChild(num);
   el.appendChild(inner);
   paintTile(el, tile);
   el.style.transform = tileTransform(tile.x, tile.y);
@@ -227,15 +237,29 @@ function createTileEl(tile) {
 function paintTile(el, tile) {
   const { bg, fg } = tileStyle(tile.value);
   el.dataset.value = tile.value;
-  el.dataset.len = String(tile.value).length;
   const inner = el.firstChild;
   inner.style.backgroundColor = bg;
   inner.style.color = fg;
-  inner.textContent = tile.value;
+  inner.firstChild.textContent = tile.value;
 }
 
 function tileStyle(value) {
   return TILE_STYLES[value] ?? HIGH;
+}
+
+// Scale the number down so even large values fit the tile. The scale is a ratio
+// of text width to box width — both scale with --cell-size, so it survives
+// board resizes and only needs recomputing when the value changes.
+function fitText(el) {
+  const num = el.firstChild.firstChild;
+  num.style.transform = "";
+  const max = el.firstChild.clientWidth * 0.84;
+  const natural = num.offsetWidth; // layout width, unaffected by any transform
+  if (natural > max) num.style.transform = `scale(${max / natural})`;
+}
+
+function refitAll() {
+  for (const el of tileEls.values()) fitText(el);
 }
 
 function renderScore() {
@@ -293,15 +317,17 @@ function pop(el) {
 }
 
 // Tile pop/spawn animate the inner layer, leaving the wrapper's slide untouched.
+// Both are delayed by the slide so they land *after* tiles arrive (the classic
+// 2048 sequencing); `backwards` holds the start frame during the delay.
 function popTile(el) {
   const inner = el.firstChild;
   inner.style.animation = "none";
   void inner.offsetWidth;
-  inner.style.animation = `pop ${POP_MS}ms ease-in-out`;
+  inner.style.animation = `pop ${POP_MS}ms ease-in-out ${SLIDE_MS}ms backwards`;
 }
 
 function appearTile(el) {
-  el.firstChild.style.animation = `appear ${SLIDE_MS}ms ease-out`;
+  el.firstChild.style.animation = `appear 160ms ease-out ${SLIDE_MS}ms backwards`;
 }
 
 function floatScore(added) {

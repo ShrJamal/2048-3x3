@@ -394,6 +394,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   border-radius: var(--cell-radius);
   font-weight: 800;
   font-size: calc(var(--cell-size) * 0.4);
@@ -401,15 +402,11 @@ main {
     inset 0 -0.35rem 0 var(--tile-lip);
 }
 
-.tile[data-len="3"] .tile-inner {
-  font-size: calc(var(--cell-size) * 0.3);
-}
-.tile[data-len="4"] .tile-inner {
-  font-size: calc(var(--cell-size) * 0.23);
-}
-.tile[data-len="5"] .tile-inner,
-.tile[data-len="6"] .tile-inner {
-  font-size: calc(var(--cell-size) * 0.18);
+/* The number is scaled down by JS (fitText) so large values never overflow. */
+.tile-num {
+  display: inline-block;
+  white-space: nowrap;
+  line-height: 1;
 }
 
 /* ---- Game over overlay ---- */
